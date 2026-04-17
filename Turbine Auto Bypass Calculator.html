@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор Авто-Баланса Турбины</title>
+    <style>
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #3d3d3d;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent-color: #ff4444;
+            --success-color: #00ff00;
+            --warning-color: #ffd700;
+            --yellow-color: #ffd700;
+            --border-color: #404040;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --slider-bg: #404040;
+            --slider-thumb: #ffd700;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .section-title {
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .info-list {
+            margin-bottom: 25px;
+            padding-left: 20px;
+        }
+        
+        .info-list li {
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+        }
+        
+        .g {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+        
+        .r {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        .math-display {
+            background-color: var(--bg-tertiary);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin: 10px 0;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .fraction {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+        }
+        
+        .numerator {
+            display: block;
+            padding: 0 5px;
+        }
+        
+        .denominator {
+            display: block;
+            border-top: 1px solid var(--text-primary);
+            padding: 0 5px;
+        }
+        
+        .input-section {
+            background-color: var(--bg-tertiary);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--slider-bg);
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--slider-thumb);
+            cursor: pointer;
+            border: 2px solid var(--bg-secondary);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--slider-thumb);
+            cursor: pointer;
+            border: 2px solid var(--bg-secondary);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        input[type="range"]::-webkit-slider-track {
+            background: var(--slider-bg);
+            border-radius: 4px;
+            height: 8px;
+        }
+        
+        input[type="range"]::-moz-range-track {
+            background: var(--slider-bg);
+            border-radius: 4px;
+            height: 8px;
+            border: none;
+        }
+        
+        #demandValue {
+            font-weight: bold;
+            color: var(--yellow-color);
+            font-size: 1.1rem;
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        
+        h3 {
+            margin: 20px 0 10px;
+            color: var(--text-primary);
+        }
+        
+        .inline-codeblock {
+            background-color: var(--bg-tertiary);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .note {
+            background-color: #333300;
+            border-left: 4px solid var(--yellow-color);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            color: var(--accent-color);
+        }
+        
+        .calculation-results {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .result-box {
+            flex: 1;
+            min-width: 200px;
+            background-color: var(--bg-tertiary);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            border-top: 4px solid var(--yellow-color);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .result-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-top: 10px;
+            color: var(--yellow-color);
+        }
+        
+        .result-box p {
+            color: var(--text-primary);
+            margin-top: 10px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .calculation-results {
+                flex-direction: column;
+            }
+            
+            .slider-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            #demandValue {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="container calculator" id="turbine-calc">
+        <h2 class="section-title">Калькулятор Авто-Баланса Турбины</h2>
+        
+        <ul class="info-list">
+            <li>Формула для настройки авто-байпаса <span class="g"><strong>с</strong></span> дополнительной эффективностью:</li>
+            <div class="math-display">
+                АвтоБаланс = 
+                <span class="fraction">
+                    <span class="numerator">Спрос</span>
+                    <span class="denominator">2</span>
+                </span>
+                + 12
+            </div>
+
+            <li>Формула для настройки авто-байпаса <span class="r"><strong>без</strong></span> дополнительной эффективности:</li>
+            <div class="math-display">
+                АвтоБаланс = 
+                <span class="fraction">
+                    <span class="numerator">Спрос</span>
+                    <span class="denominator">2</span>
+                </span>
+            </div>
+
+            <li>Используйте калькулятор ниже для расчета значений!</li>
+        </ul>
+
+        <div class="input-section">
+            <label for="demandSlider">Спрос:</label>
+            <div class="slider-container">
+                <input type="range" id="demandSlider" name="demandSlider" min="500" max="1500" step="10" value="1500" oninput="runCalculationTurbine()">
+                <span id="demandValue">1500 МВт</span>
+            </div>
+            <div class="range-labels">
+                <span>500 МВт</span>
+                <span>1000 МВт</span>
+                <span>1500 МВт</span>
+            </div>
+        </div>
+
+        <div class="calculation-results">
+            <div class="result-box">
+                <h3>АвтоБаланс МВт</h3>
+                <div class="result-value" id="calculation-span">750 МВт</div>
+                <p>(Без дополнительной эффективности)</p>
+            </div>
+            
+            <div class="result-box">
+                <h3>АвтоБаланс МВт (+12)</h3>
+                <div class="result-value" id="calculation-span2">750 МВт</div>
+                <p>(С дополнительной эффективностью)</p>
+            </div>
+        </div>
+
+        <div class="note">
+            <p>Деаэратор значительно влияет на количество пара, которое может производить реактор; соответствующим образом отрегулируйте входные и выходные клапаны.</p>
+        </div>
+    </section>
+
+    <script>
+        // Initialize the calculator when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            runCalculationTurbine();
+        });
+        
+        // Function to run the turbine calculations
+        function runCalculationTurbine() {
+            // Get the current demand value from the slider
+            const demandSlider = document.getElementById('demandSlider');
+            const demandValue = parseInt(demandSlider.value);
+            
+            // Update the displayed demand value
+            document.getElementById('demandValue').textContent = demandValue + ' МВт';
+            
+            // Calculate the auto-balance values
+            const autoBalance = Math.floor(demandValue / 2);
+            let autoBalanceWithEfficiency = autoBalance + 12;
+            
+            // Apply 750 MW limit for efficiency result
+            const limit = 750;
+            if (autoBalanceWithEfficiency > limit) {
+                autoBalanceWithEfficiency = limit;
+            }
+            
+            // Update the displayed calculation results
+            document.getElementById('calculation-span').textContent = autoBalance + ' МВт';
+            document.getElementById('calculation-span2').textContent = autoBalanceWithEfficiency + ' МВт';
+        }
+    </script>
+</body>
+</html>
